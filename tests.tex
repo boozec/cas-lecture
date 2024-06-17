@@ -33,6 +33,18 @@ Let's choose 14 tests from the FunctionBench serverless benchmarking suite [4].
 
 5 tests for each Kubernetes distribution. Executed using the recommended OpenFaaS of-watchdog template for Python 3.7.
 
+\pause
+
+We'll see performances for:
+
+\begin{itemize}
+    \item Cold start
+    \item Serial execution
+    \item Parallel execution using a single replica
+    \item Parallel execution using native OpenFaaS auto scaling
+    \item Parallel execution using Kubernetes HPA
+\end{itemize}
+
 \end{frame}
 
 % -- frame 4 --
@@ -57,13 +69,13 @@ Kubespray exhibits a 15\% increase compared to both K3s and MicroK8s.
 Is the performance difference between K3s and MicroK8s statistically significant?
 \pause
 
-Using a Mann-Whitney U test with \(\alpha = 0.05\) and 
+Using a Mann-Whitney \(U\) test with \(\alpha = 0.05\) and 
 \begin{itemize}
     \item H0: the two populations are equal
-    \item H0: the two populations are not equal
+    \item H1: the two populations are not equal
 \end{itemize}
 
-we have a \(p\)-value = 0.202, so we can't reject the null hypothesis.
+we have a \(p\)-value \(= 0.202 > 0.05\), so we can't reject the null hypothesis.
 
 \end{frame}
 
@@ -84,16 +96,17 @@ Once again, Kubespray results are slower than both K3s and MicroK8s.
 
 % -- frame 9 --
 \begin{frame}{Serial execution performance — Results}
-Is the performance difference between K3s and MicroK8s statistically significant?
+How can I compare these three results?
 \pause
 
 Using a Kruskal-Wallis test with \(\alpha = 0.05\) and 
 \begin{itemize}
     \item H0: the population medians are equal
-    \item H0: the population medians are not equal
+    \item H1: the population medians are not equal
 \end{itemize}
 
-where the null hypothesis failed to be rejected for the video-processing test. Keeping the same hypothesis we can perform the Mann-Whitney U test where, this time, the null hypothesis is rejected in 10 of the 14 tests. The null hypothesis can't be rejected for 3 CPU and 1 network benchmarks.
+where the null hypothesis failed to be rejected for the video-processing test. \pause
+\\ Keeping the same hypothesis we can perform the Mann-Whitney \(U\) test for both K3s and MicroK8s and, this time, the null hypothesis is rejected in 10 of the 14 tests. The null hypothesis can't be rejected for 3 CPU and 1 network benchmarks.
 \end{frame}
 
 % -- frame 10 --
@@ -116,13 +129,14 @@ This time Kubespray has better performance than both K3s and MicroK8s for 6 of t
 \begin{frame}{Parallel execution using native OpenFaaS auto scaling}
 Each function is invoked for a fixed amount of time using varying concurrency to determine the performance of the auto-scaling behavior.
 \pause
+\\
 It tests the number of successful invocations per second for the last 10 seconds: if the number is larger than 5, it scales up the number of function instances up to a preconfigured maximum.
 \end{frame}
 
 
 % -- frame 13 --
 \begin{frame}{Parallel execution using native OpenFaaS auto scaling  — Results}
-Performances are tests by 1 request per second from 6 concurrent workers for more than 200 seconds, successfully reaching the defined threshold for the maximum number of replicas.
+Performances are tests by 1 req/s from 6 concurrent workers for more than 200s, successfully reaching the defined threshold for the maximum number of replicas.\\
 The current number of deployed replicas are not taken but this leads to suboptimal scaling decision scaling to maximum number of configured replicas or not scaling at all under a consistent load.
 \end{frame}
 
@@ -142,7 +156,7 @@ We find out results for three different execution strategy:
 
 % -- frame 15 --
 \begin{frame}{Parallel execution using Kubernetes Horizonal Pod Autoscaler  — Results}
-Kubespray exhibits higher response times across the three tests, while the results obtained from K3S and MicroK8s are similar.
+Kubespray exhibits higher response times across the three tests, while the results obtained from K3sand MicroK8s are similar.
 
 \begin{figure}
     \centering
